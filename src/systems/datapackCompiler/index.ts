@@ -521,7 +521,7 @@ async function createAnimationStorage(rig: IRenderedRig, animations: IRenderedAn
 		const addFrameDataCommand = () => {
 			const str = `data modify storage aj.${
 				Project!.animated_java.export_namespace
-			}:animations ${animation.safe_name} set value ${frames.toString()}`
+			}:animations ${animation.safe_name} merge value ${frames.toString()}`
 			dataCommands.push(str)
 			frames = new NbtCompound()
 		}
