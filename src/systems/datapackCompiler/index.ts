@@ -928,14 +928,14 @@ function createPassengerStorage(rig: IRenderedRig) {
 					.set('roty', new NbtFloat(Math.radToDeg(node.default_transform.rot[1])))
 				if (node.type === 'locator' && node.config?.use_entity)
 					data.set('uuid', new NbtString(''))
-				;(node.type === 'camera' ? cameras : locators).set(node.minify_name, data)
+				;(node.type === 'camera' ? cameras : locators).set(node.safe_name, data)
 				break
 			}
 			case 'bone':
 			case 'text_display':
 			case 'item_display':
 			case 'block_display': {
-				bones.set(node.type + '_' + node.minify_name, new NbtString(''))
+				bones.set(node.type + '_' + node.safe_name, new NbtString(''))
 				break
 			}
 		}
