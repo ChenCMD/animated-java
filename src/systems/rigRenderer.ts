@@ -65,7 +65,7 @@ export interface IRenderedNode {
 	type: string
 	name: string
 	safe_name: string
-	minify_name: string
+	minify_key: string
 	uuid: string
 	parent?: string
 	/**
@@ -89,6 +89,7 @@ export interface ICamera extends OutlinerElement {
 export interface IRenderedNodes {
 	Bone: IRenderedNode & {
 		type: 'bone'
+		minify_key: string
 		bounding_box: THREE.Box3
 		/**
 		 * The base scale of the bone, used to offset any rescaling done to the bone's model due to exceeding the 3x3x3 model size limit.
@@ -101,17 +102,21 @@ export interface IRenderedNodes {
 	}
 	Struct: IRenderedNode & {
 		type: 'struct'
+		minify_key: `s_${string}`
 	}
 	Camera: IRenderedNode & {
 		type: 'camera'
+		minify_key: `c_${string}`
 		config?: IBlueprintCameraConfigJSON
 	}
 	Locator: IRenderedNode & {
 		type: 'locator'
+		minify_key: `l_${string}`
 		config?: IBlueprintLocatorConfigJSON
 	}
 	TextDisplay: IRenderedNode & {
 		type: 'text_display'
+		minify_key: `t_${string}`
 		text?: JsonText
 		line_width: number
 		background_color: string
@@ -127,6 +132,7 @@ export interface IRenderedNodes {
 	}
 	ItemDisplay: IRenderedNode & {
 		type: 'item_display'
+		minify_key: `i_${string}`
 		item: string
 		item_display: string
 		/**
@@ -137,6 +143,7 @@ export interface IRenderedNodes {
 	}
 	BlockDisplay: IRenderedNode & {
 		type: 'block_display'
+		minify_key: `b_${string}`
 		block: string
 		/**
 		 * The base scale of the bone, used to offset any rescaling done to the bone's model due to exceeding the 3x3x3 model size limit.
@@ -335,7 +342,7 @@ function renderGroup(
 		type: 'bone',
 		name: group.name,
 		safe_name: toSafeFuntionName(group.name),
-		minify_name: makeMinifyName(group.name, minifyNameState),
+		minify_key: makeMinifyName(group.name, minifyNameState),
 		uuid: group.uuid,
 		parent: parentId,
 		bounding_box: getBoneBoundingBox(group),
@@ -403,7 +410,7 @@ function renderGroup(
 			type: 'struct',
 			name: group.name,
 			safe_name: renderedBone.safe_name,
-			minify_name: makeMinifyName(group.name, minifyNameState),
+			minify_key: `s_${makeMinifyName(group.name, minifyNameState)}`,
 			uuid: group.uuid,
 			parent: parentId,
 			default_transform: {} as INodeTransform,
@@ -446,7 +453,7 @@ function renderItemDisplay(display: VanillaItemDisplay, rig: IRenderedRig, minif
 		type: 'item_display',
 		name: display.name,
 		safe_name: toSafeFuntionName(display.name),
-		minify_name: makeMinifyName(display.name, minifyNameState),
+		minify_key: `i_${makeMinifyName(display.name, minifyNameState)}`,
 		uuid: display.uuid,
 		parent: parentId,
 		item: display.item,
@@ -475,7 +482,7 @@ function renderBlockDisplay(display: VanillaBlockDisplay, rig: IRenderedRig, min
 		type: 'block_display',
 		name: display.name,
 		safe_name: toSafeFuntionName(display.name),
-		minify_name: makeMinifyName(display.name, minifyNameState),
+		minify_key: `b_${makeMinifyName(display.name, minifyNameState)}`,
 		uuid: display.uuid,
 		block: display.block,
 		parent: parentId,
@@ -503,7 +510,7 @@ function renderTextDisplay(display: TextDisplay, rig: IRenderedRig, minifyNameSt
 		type: 'text_display',
 		name: display.name,
 		safe_name: toSafeFuntionName(display.name),
-		minify_name: makeMinifyName(display.name, minifyNameState),
+		minify_key: `t_${makeMinifyName(display.name, minifyNameState)}`,
 		uuid: display.uuid,
 		parent: parentId,
 		text: JsonText.fromString(display.text),
@@ -533,7 +540,7 @@ function renderLocator(locator: Locator, rig: IRenderedRig, minifyNameState: Min
 		type: 'locator',
 		name: locator.name,
 		safe_name: toSafeFuntionName(locator.name),
-		minify_name: makeMinifyName(locator.name, minifyNameState),
+		minify_key: `l_${makeMinifyName(locator.name, minifyNameState)}`,
 		uuid: locator.uuid,
 		parent: parentId,
 		config: locator.config,
@@ -551,7 +558,7 @@ function renderCamera(camera: ICamera, rig: IRenderedRig, minifyNameState: Minif
 		type: 'camera',
 		name: camera.name,
 		safe_name: toSafeFuntionName(camera.name),
-		minify_name: makeMinifyName(camera.name, minifyNameState),
+		minify_key: `c_${makeMinifyName(camera.name, minifyNameState)}`,
 		uuid: camera.uuid,
 		parent: parentId,
 		config: camera.config,

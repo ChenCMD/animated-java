@@ -864,14 +864,14 @@ async function createAnimationStorage(rig: IRenderedRig, animations: IRenderedAn
 				}
 				if (BONE_TYPES.includes(node.type)) {
 					thisFrame.set(
-						node.type + '_' + node.minify_name,
+						node.minify_key,
 						new NbtCompound()
 							.set('transformation', matrixToNbtFloatArray(transform.matrix))
 							.set('start_interpolation', new NbtInt(0))
 					)
 				} else {
 					thisFrame.set(
-						node.type + '_' + node.minify_name,
+						node.minify_key,
 						new NbtCompound()
 							.set('posx', new MinifyNBTFloat(transform.pos[0]))
 							.set('posy', new MinifyNBTFloat(transform.pos[1]))
