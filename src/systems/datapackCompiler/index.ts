@@ -843,10 +843,12 @@ async function createAnimationStorage(rig: IRenderedRig, animations: IRenderedAn
 	for (const animation of animations) {
 		PROGRESS_DESCRIPTION.set(`Creating Animation Storage for '${animation.safe_name}'`)
 		let frames = new NbtCompound()
+		let isFirstCommand = true
 		const addFrameDataCommand = () => {
 			const str = `data modify storage aj.${
 				Project!.animated_java.export_namespace
-			}:animations ${animation.safe_name} merge value ${frames.toString()}`
+			}:animations ${animation.safe_name} ${isFirstCommand ? 'set' : 'merge'} value ${frames.toString()}`
+			isFirstCommand = false
 			dataCommands.push(str)
 			frames = new NbtCompound()
 		}
