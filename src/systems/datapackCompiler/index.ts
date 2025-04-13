@@ -8,6 +8,7 @@ import {
 	arrayToNbtFloatArray,
 	getFunctionNamespace,
 	matrixToNbtFloatArray,
+	MinifyNBTFloat,
 	replacePathPart,
 	sortObjectKeys,
 	transformationToNbt,
@@ -870,11 +871,11 @@ async function createAnimationStorage(rig: IRenderedRig, animations: IRenderedAn
 					thisFrame.set(
 						node.type + '_' + node.minify_name,
 						new NbtCompound()
-							.set('posx', new NbtFloat(transform.pos[0]))
-							.set('posy', new NbtFloat(transform.pos[1]))
-							.set('posz', new NbtFloat(transform.pos[2]))
-							.set('rotx', new NbtFloat(transform.rot[0]))
-							.set('roty', new NbtFloat(transform.rot[1]))
+							.set('posx', new MinifyNBTFloat(transform.pos[0]))
+							.set('posy', new MinifyNBTFloat(transform.pos[1]))
+							.set('posz', new MinifyNBTFloat(transform.pos[2]))
+							.set('rotx', new MinifyNBTFloat(transform.rot[0]))
+							.set('roty', new MinifyNBTFloat(transform.rot[1]))
 					)
 				}
 			}

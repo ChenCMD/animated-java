@@ -9,8 +9,14 @@ import {
 } from 'fflate/browser'
 import { INodeTransform } from './animationRenderer'
 
+export class MinifyNBTFloat extends NbtFloat {
+	toString() {
+		return `${this.getAsNumber().toFixed(5).replace(/\.?0+$/, '')}f`
+	}
+}
+
 export function arrayToNbtFloatArray(array: number[]) {
-	return new NbtList(array.map(v => new NbtFloat(v)))
+	return new NbtList(array.map(v => new MinifyNBTFloat(v)))
 }
 
 export function matrixToNbtFloatArray(matrix: THREE.Matrix4) {
