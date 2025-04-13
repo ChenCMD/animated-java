@@ -121,5 +121,18 @@
 				]
 			}
 		]
+	},
+	"1.6.4-TSB-Patched-1": {
+		"title": "v1.6.4 TSB Patched 1",
+		"author": "Titus Evans (SnaveSutit) and ChenCMD",
+		"date": "2025-04-13",
+		"categories": [
+			{
+				"title": "Changes",
+				"list": [
+					"\"use storage for animation\" を有効化した際のデータパックのサイズを大幅に削減"
+				]
+			}
+		]
 	}
 }
