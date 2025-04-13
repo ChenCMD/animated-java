@@ -11,7 +11,14 @@ import { INodeTransform } from './animationRenderer'
 
 export class MinifyNBTFloat extends NbtFloat {
 	toString() {
-		return `${this.getAsNumber().toFixed(5).replace(/\.?0+$/, '')}f`
+		const s = `${this.getAsNumber().toFixed(5).replace(/\.?0+$/, '')}f`
+		if (s.startsWith('-0.')) {
+			return `-${s.slice(2)}`
+		} else if (s.startsWith('0.')) {
+			return s.slice(1)
+		} else {
+			return s
+		}
 	}
 }
 
