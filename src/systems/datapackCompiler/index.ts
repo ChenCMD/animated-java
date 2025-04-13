@@ -861,14 +861,14 @@ async function createAnimationStorage(rig: IRenderedRig, animations: IRenderedAn
 				}
 				if (BONE_TYPES.includes(node.type)) {
 					thisFrame.set(
-						node.type + '_' + node.safe_name,
+						node.type + '_' + node.minify_name,
 						new NbtCompound()
 							.set('transformation', matrixToNbtFloatArray(transform.matrix))
 							.set('start_interpolation', new NbtInt(0))
 					)
 				} else {
 					thisFrame.set(
-						node.type + '_' + node.safe_name,
+						node.type + '_' + node.minify_name,
 						new NbtCompound()
 							.set('posx', new NbtFloat(transform.pos[0]))
 							.set('posy', new NbtFloat(transform.pos[1]))
@@ -925,14 +925,14 @@ function createPassengerStorage(rig: IRenderedRig) {
 					.set('roty', new NbtFloat(Math.radToDeg(node.default_transform.rot[1])))
 				if (node.type === 'locator' && node.config?.use_entity)
 					data.set('uuid', new NbtString(''))
-				;(node.type === 'camera' ? cameras : locators).set(node.safe_name, data)
+				;(node.type === 'camera' ? cameras : locators).set(node.minify_name, data)
 				break
 			}
 			case 'bone':
 			case 'text_display':
 			case 'item_display':
 			case 'block_display': {
-				bones.set(node.type + '_' + node.safe_name, new NbtString(''))
+				bones.set(node.type + '_' + node.minify_name, new NbtString(''))
 				break
 			}
 		}

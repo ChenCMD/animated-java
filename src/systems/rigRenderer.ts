@@ -65,6 +65,7 @@ export interface IRenderedNode {
 	type: string
 	name: string
 	safe_name: string
+	minify_name: string
 	uuid: string
 	parent?: string
 	/**
@@ -316,7 +317,8 @@ function getBoneBoundingBox(group: Group) {
 function renderGroup(
 	group: Group,
 	rig: IRenderedRig,
-	defaultVariant: IRenderedVariant
+	defaultVariant: IRenderedVariant,
+	minifyNameState: MinifyNameState
 ): INodeStructure | undefined {
 	if (!group.export) return
 	const parentId = group.parent instanceof Group ? group.parent.uuid : undefined
@@ -333,6 +335,7 @@ function renderGroup(
 		type: 'bone',
 		name: group.name,
 		safe_name: toSafeFuntionName(group.name),
+		minify_name: makeMinifyName(group.name, minifyNameState),
 		uuid: group.uuid,
 		parent: parentId,
 		bounding_box: getBoneBoundingBox(group),
@@ -360,27 +363,27 @@ function renderGroup(
 		if (!node.export) continue
 		switch (true) {
 			case node instanceof Group: {
-				renderGroup(node, rig, defaultVariant)
+				renderGroup(node, rig, defaultVariant, minifyNameState)
 				break
 			}
 			case node instanceof Locator: {
-				renderLocator(node, rig)
+				renderLocator(node, rig, minifyNameState)
 				break
 			}
 			case node instanceof TextDisplay: {
-				renderTextDisplay(node, rig)
+				renderTextDisplay(node, rig, minifyNameState)
 				break
 			}
 			case OutlinerElement.types.camera && node instanceof OutlinerElement.types.camera: {
-				renderCamera(node as ICamera, rig)
+				renderCamera(node as ICamera, rig, minifyNameState)
 				break
 			}
 			case node instanceof VanillaItemDisplay: {
-				renderItemDisplay(node, rig)
+				renderItemDisplay(node, rig, minifyNameState)
 				break
 			}
 			case node instanceof VanillaBlockDisplay: {
-				renderBlockDisplay(node, rig)
+				renderBlockDisplay(node, rig, minifyNameState)
 				break
 			}
 			case node instanceof Cube: {
@@ -400,6 +403,7 @@ function renderGroup(
 			type: 'struct',
 			name: group.name,
 			safe_name: renderedBone.safe_name,
+			minify_name: makeMinifyName(group.name, minifyNameState),
 			uuid: group.uuid,
 			parent: parentId,
 			default_transform: {} as INodeTransform,
@@ -426,7 +430,7 @@ function renderGroup(
 	rig.nodes[group.uuid] = renderedBone
 }
 
-function renderItemDisplay(display: VanillaItemDisplay, rig: IRenderedRig) {
+function renderItemDisplay(display: VanillaItemDisplay, rig: IRenderedRig, minifyNameState: MinifyNameState) {
 	if (!display.export) return
 	const parentId = display.parent instanceof Group ? display.parent.uuid : undefined
 
@@ -442,6 +446,7 @@ function renderItemDisplay(display: VanillaItemDisplay, rig: IRenderedRig) {
 		type: 'item_display',
 		name: display.name,
 		safe_name: toSafeFuntionName(display.name),
+		minify_name: makeMinifyName(display.name, minifyNameState),
 		uuid: display.uuid,
 		parent: parentId,
 		item: display.item,
@@ -454,7 +459,7 @@ function renderItemDisplay(display: VanillaItemDisplay, rig: IRenderedRig) {
 	rig.nodes[display.uuid] = renderedBone
 }
 
-function renderBlockDisplay(display: VanillaBlockDisplay, rig: IRenderedRig) {
+function renderBlockDisplay(display: VanillaBlockDisplay, rig: IRenderedRig, minifyNameState: MinifyNameState) {
 	if (!display.export) return
 	const parentId = display.parent instanceof Group ? display.parent.uuid : undefined
 
@@ -470,6 +475,7 @@ function renderBlockDisplay(display: VanillaBlockDisplay, rig: IRenderedRig) {
 		type: 'block_display',
 		name: display.name,
 		safe_name: toSafeFuntionName(display.name),
+		minify_name: makeMinifyName(display.name, minifyNameState),
 		uuid: display.uuid,
 		block: display.block,
 		parent: parentId,
@@ -481,7 +487,7 @@ function renderBlockDisplay(display: VanillaBlockDisplay, rig: IRenderedRig) {
 	rig.nodes[display.uuid] = renderedBone
 }
 
-function renderTextDisplay(display: TextDisplay, rig: IRenderedRig): INodeStructure | undefined {
+function renderTextDisplay(display: TextDisplay, rig: IRenderedRig, minifyNameState: MinifyNameState): INodeStructure | undefined {
 	if (!display.export) return
 	const parentId = display.parent instanceof Group ? display.parent.uuid : undefined
 
@@ -497,6 +503,7 @@ function renderTextDisplay(display: TextDisplay, rig: IRenderedRig): INodeStruct
 		type: 'text_display',
 		name: display.name,
 		safe_name: toSafeFuntionName(display.name),
+		minify_name: makeMinifyName(display.name, minifyNameState),
 		uuid: display.uuid,
 		parent: parentId,
 		text: JsonText.fromString(display.text),
@@ -518,7 +525,7 @@ function renderTextDisplay(display: TextDisplay, rig: IRenderedRig): INodeStruct
 	}
 }
 
-function renderLocator(locator: Locator, rig: IRenderedRig) {
+function renderLocator(locator: Locator, rig: IRenderedRig, minifyNameState: MinifyNameState) {
 	if (!locator.export) return
 	const parentId = (locator.parent instanceof Group ? locator.parent.uuid : locator.parent)!
 
@@ -526,6 +533,7 @@ function renderLocator(locator: Locator, rig: IRenderedRig) {
 		type: 'locator',
 		name: locator.name,
 		safe_name: toSafeFuntionName(locator.name),
+		minify_name: makeMinifyName(locator.name, minifyNameState),
 		uuid: locator.uuid,
 		parent: parentId,
 		config: locator.config,
@@ -535,7 +543,7 @@ function renderLocator(locator: Locator, rig: IRenderedRig) {
 	rig.nodes[locator.uuid] = renderedLocator
 }
 
-function renderCamera(camera: ICamera, rig: IRenderedRig) {
+function renderCamera(camera: ICamera, rig: IRenderedRig, minifyNameState: MinifyNameState) {
 	if (!camera.export) return
 	const parentId = (camera.parent instanceof Group ? camera.parent.uuid : camera.parent)!
 
@@ -543,6 +551,7 @@ function renderCamera(camera: ICamera, rig: IRenderedRig) {
 		type: 'camera',
 		name: camera.name,
 		safe_name: toSafeFuntionName(camera.name),
+		minify_name: makeMinifyName(camera.name, minifyNameState),
 		uuid: camera.uuid,
 		parent: parentId,
 		config: camera.config,
@@ -616,6 +625,16 @@ function renderVariantModels(variant: Variant, rig: IRenderedRig) {
 	}
 
 	return models
+}
+
+type MinifyNameState = { assignedName: Record<string, number>; index: number }
+function makeMinifyName(name: string, minifyNameIndex: MinifyNameState): string {
+	if (name in minifyNameIndex.assignedName) {
+		return minifyNameIndex.assignedName[name].toString(36)
+	}
+	const newName = minifyNameIndex.index.toString(36)
+	minifyNameIndex.assignedName[name] = minifyNameIndex.index++
+	return newName
 }
 
 export function hashRig(rig: IRenderedRig) {
@@ -708,31 +727,32 @@ export function renderRig(modelExportFolder: string, textureExportFolder: string
 		models: {},
 	}
 
+	const minifyNameState: MinifyNameState = { assignedName: {}, index: 0 }
 	for (const node of Outliner.root) {
 		switch (true) {
 			case node instanceof Group: {
-				renderGroup(node, rig, rig.variants[defaultVariant.uuid])
+				renderGroup(node, rig, rig.variants[defaultVariant.uuid], minifyNameState)
 				break
 			}
 			case node instanceof Locator: {
-				renderLocator(node, rig)
+				renderLocator(node, rig, minifyNameState)
 
 				break
 			}
 			case node instanceof TextDisplay: {
-				renderTextDisplay(node, rig)
+				renderTextDisplay(node, rig, minifyNameState)
 				break
 			}
 			case OutlinerElement.types.camera && node instanceof OutlinerElement.types.camera: {
-				renderCamera(node as ICamera, rig)
+				renderCamera(node as ICamera, rig, minifyNameState)
 				break
 			}
 			case node instanceof VanillaItemDisplay: {
-				renderItemDisplay(node, rig)
+				renderItemDisplay(node, rig, minifyNameState)
 				break
 			}
 			case node instanceof VanillaBlockDisplay: {
-				renderBlockDisplay(node, rig)
+				renderBlockDisplay(node, rig, minifyNameState)
 				break
 			}
 			case node instanceof Cube: {
